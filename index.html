@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="todoApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster Hub | Modern To-Do List</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- AngularJS CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body ng-controller="x">
+
+    <!-- Login Container -->
+    <div class="login-container" ng-hide="isLoggedIn">
+        <div class="login-box">
+            <header>
+                <h1>Welcome to <span>TaskMaster</span></h1>
+                <p>Please log in to manage your tasks</p>
+            </header>
+            <form name="loginForm" ng-submit="login()" novalidate>
+                <div class="input-group-vertical">
+                    <label>Full Name</label>
+                    <input type="text" name="name" ng-model="user.name" placeholder="Enter your name" required
+                        ng-minlength="3">
+                    <span class="error" ng-show="loginForm.name.$touched && loginForm.name.$error.required">Name is
+                        required.</span>
+                    <span class="error" ng-show="loginForm.name.$touched && loginForm.name.$error.minlength">Too short
+                        (min 3 chars).</span>
+                </div>
+
+                <div class="input-group-vertical">
+                    <label>Age</label>
+                    <input type="number" name="age" ng-model="user.age" placeholder="Enter your age" required min="13"
+                        max="100">
+                    <span class="error" ng-show="loginForm.age.$touched && loginForm.age.$error.required">Age is
+                        required.</span>
+                    <span class="error"
+                        ng-show="loginForm.age.$touched && (loginForm.age.$error.min || loginForm.age.$error.max)">Must
+                        be between 13 and 100.</span>
+                </div>
+
+                <button type="submit" class="btn-primary full-width" ng-disabled="loginForm.$invalid">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="app-container" ng-show="isLoggedIn">
+        <header>
+            <h1>Hello, <span>{{user.name}}</span></h1>
+            <p class="stats">
+                {{pending()}} of {{schedule.length}} pending
+                <a href="#" ng-click="archive()" class="archive-link">[ archive ]</a>
+            </p>
+        </header>
+
+        <main>
+            <div class="filters">
+                <button ng-class="{'active': filterType === 'all'}" ng-click="filterType = 'all'">All</button>
+                <button ng-class="{'active': filterType === 'pending'}"
+                    ng-click="filterType = 'pending'">Pending</button>
+                <button ng-class="{'active': filterType === 'completed'}"
+                    ng-click="filterType = 'completed'">Completed</button>
+            </div>
+
+            <ul class="todo-list">
+                <li ng-repeat="todo in schedule | filter:statusFilter" class="todo-item animate-in">
+                    <label class="checkbox-container">
+                        <input type="checkbox" ng-model="todo.completed">
+                        <span class="checkmark"></span>
+                    </label>
+                    <span class="work-text completed-{{todo.completed}}">{{todo.work}}</span>
+                    <button class="delete-btn" ng-click="deleteTask($index)">&times;</button>
+                </li>
+            </ul>
+
+            <div class="empty-state" ng-if="schedule.length === 0">
+                <p>No tasks yet. Add one below!</p>
+            </div>
+        </main>
+
+        <footer>
+            <form ng-submit="addNew()">
+                <div class="input-group">
+                    <input type="text" ng-model="todoWork" placeholder="Add new work here..." required>
+                    <button type="submit" class="btn-primary">Add</button>
+                </div>
+            </form>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
